@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clean Bad News</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧹 Clean Bad News</h1>
+            <p class="subtitle">Filtrando notícias indesejadas</p>
+        </div>
+
+        <div class="main-content">
+            <div class="toggle-section">
+                <div class="toggle-item">
+                    <span class="toggle-label">Ativar filtro</span>
+                    <label class="switch">
+                        <input type="checkbox" id="enableToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <div class="stat-item">
+                    <span class="stat-number" id="blockedCount">0</span>
+                    <span class="stat-label">notícias filtradas</span>
+                </div>
+            </div>
+
+            <div class="keywords-section">
+                <h3>Palavras-chave bloqueadas:</h3>
+                <div class="keywords-container" id="keywordsContainer">
+                </div>
+                
+                <div class="add-keyword">
+                    <input type="text" id="newKeyword" placeholder="Adicionar nova palavra-chave" maxlength="50">
+                    <button id="addButton">+</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p class="version">v1.0</p>
+            <p class="description">Remove automaticamente blocos de notícias com palavras específicas</p>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html> 

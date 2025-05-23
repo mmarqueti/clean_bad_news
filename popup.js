@@ -61,6 +61,20 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateKeywordsDisplay() {
         keywordsContainer.innerHTML = '';
         
+        if (currentKeywords.length === 0) {
+            const emptyMessage = document.createElement('div');
+            emptyMessage.style.cssText = `
+                color: #6c757d;
+                font-style: italic;
+                font-size: 12px;
+                padding: 10px;
+                text-align: center;
+            `;
+            emptyMessage.textContent = 'Nenhuma palavra-chave adicionada ainda';
+            keywordsContainer.appendChild(emptyMessage);
+            return;
+        }
+        
         currentKeywords.forEach(keyword => {
             const tag = document.createElement('span');
             tag.className = 'keyword-tag';
@@ -75,6 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
         await saveKeywords();
         updateKeywordsDisplay();
         await updateContentScripts();
+        showNotification(`Palavra-chave "${keyword}" removida`);
     }
 
     async function addKeyword() {
@@ -102,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
         await updateContentScripts();
         
         newKeywordInput.value = '';
-        showNotification('Palavra-chave adicionada com sucesso!');
+        showNotification(`Palavra-chave "${newKeyword}" adicionada com sucesso!`);
     }
 
     async function saveKeywords() {

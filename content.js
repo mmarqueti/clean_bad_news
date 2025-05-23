@@ -63,7 +63,7 @@ class CleanBadNews {
     }
 
     cleanPage() {
-        if (!this.isEnabled) return;
+        if (!this.isEnabled || this.keywords.length === 0) return;
 
         // Seletores comuns para artigos e blocos de notícias
         const selectors = [
@@ -84,7 +84,8 @@ class CleanBadNews {
             '.timeline-item',
             '.content-item',
             'li[data-testid]',
-            'div[role="article"]'
+            'div[role="article"]',
+            'li.CardHorizontalRow__item' // Adiciona seletor específico para UOL
         ];
 
         selectors.forEach(selector => {
@@ -98,7 +99,7 @@ class CleanBadNews {
     }
 
     checkAndRemoveElement(element) {
-        if (!element || element.dataset.cleanedByCleanBadNews) return;
+        if (!element) return;
 
         const textContent = element.textContent?.toLowerCase() || '';
         const innerHTML = element.innerHTML?.toLowerCase() || '';
@@ -112,11 +113,27 @@ class CleanBadNews {
         );
 
         if (containsKeyword) {
+            // Remove a marcação anterior se existir
+            delete element.dataset.cleanedByCleanBadNews;
             this.removeElement(element);
         } else {
-            // Marca como verificado para evitar re-verificação
+            // Marca como verificado para evitar re-verificação desnecessária
             element.dataset.cleanedByCleanBadNews = 'checked';
         }
+    }
+
+    // Método para re-verificar todos os elementos (usado quando keywords são atualizadas)
+    recheckAllElements() {
+        console.log('Clean Bad News: Re-verificando todos os elementos com novas keywords:', this.keywords);
+        
+        // Remove marcadores de elementos já verificados
+        const checkedElements = document.querySelectorAll('[data-cleaned-by-clean-bad-news]');
+        checkedElements.forEach(element => {
+            delete element.dataset.cleanedByCleanBadNews;
+        });
+        
+        // Executa limpeza novamente
+        this.cleanPage();
     }
 
     removeElement(element) {
@@ -125,6 +142,16 @@ class CleanBadNews {
             const containerElement = this.findBestContainer(element);
             
             if (containerElement && containerElement.parentNode) {
+                // Verifica se já está sendo removido
+                if (containerElement.dataset.cleanedByCleanBadNews === 'removing') {
+                    return;
+                }
+                
+                // Marca para evitar dupla remoção
+                containerElement.dataset.cleanedByCleanBadNews = 'removing';
+                
+                console.log('Clean Bad News: Removendo elemento:', containerElement);
+                
                 // Adiciona uma animação suave antes de remover
                 containerElement.style.transition = 'opacity 0.3s ease-out, height 0.3s ease-out';
                 containerElement.style.opacity = '0';
@@ -170,6 +197,7 @@ class CleanBadNews {
                 classList.includes('article') ||
                 classList.includes('news') ||
                 classList.includes('entry') ||
+                classList.includes('cardhorizontalrow') ||
                 current.hasAttribute('data-testid')
             ) {
                 bestContainer = current;
@@ -185,16 +213,18 @@ class CleanBadNews {
         chrome.storage.sync.set({ enabled: this.isEnabled });
         
         if (this.isEnabled) {
-            this.cleanPage();
+            this.recheckAllElements();
         }
     }
 
     // Método para atualizar keywords
     updateKeywords(newKeywords) {
+        console.log('Clean Bad News: Atualizando keywords de:', this.keywords, 'para:', newKeywords);
         this.keywords = newKeywords.map(k => k.toLowerCase());
         chrome.storage.sync.set({ keywords: this.keywords });
         if (this.isEnabled) {
-            this.cleanPage();
+            // Re-verifica todos os elementos com as novas keywords
+            this.recheckAllElements();
         }
     }
 
@@ -230,6 +260,11 @@ function initializeExtension() {
         } else if (request.action === 'updateKeywords') {
             cleanBadNewsInstance.updateKeywords(request.keywords);
             sendResponse({ success: true });
+        } else if (request.action === 'stateChanged') {
+            cleanBadNewsInstance.isEnabled = request.enabled;
+            if (cleanBadNewsInstance.isEnabled) {
+                cleanBadNewsInstance.recheckAllElements();
+            }
         }
         return true;
     });

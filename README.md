@@ -1,6 +1,6 @@
 # 🧹 Clean Bad News
 
-Uma extensão para Google Chrome que remove automaticamente blocos de notícias contendo palavras-chave específicas como "Guerra", ajudando você a manter um feed de notícias mais limpo e positivo.
+Uma extensão para Google Chrome que remove automaticamente blocos de notícias contendo palavras-chave específicas que você definir, ajudando você a manter um feed de notícias mais limpo e positivo.
 
 ## ✨ Funcionalidades
 
@@ -78,12 +78,9 @@ clean_bad_news/
 └── README.md              # Este arquivo
 ```
 
-## ⚙️ Configurações Padrão
+## ⚙️ Configurações
 
-A extensão vem pré-configurada com as seguintes palavras-chave:
-- guerra
-
-Você pode adicionar ou remover palavras-chave conforme sua preferência.
+A extensão vem sem palavras-chave pré-configuradas. Você precisa adicionar manualmente as palavras que deseja filtrar através da interface do popup.
 
 ## 🔧 Funcionalidades Técnicas
 

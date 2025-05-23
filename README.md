@@ -17,8 +17,8 @@ Uma extensão para Google Chrome que remove automaticamente blocos de notícias 
 
 1. **Clone ou baixe este repositório**
    ```bash
-   git clone https://github.com/seu-usuario/clean-bad-news.git
-   cd clean-bad-news
+   git clone https://github.com/mmarqueti/clean_bad_news.git
+   cd clean_bad_news
    ```
 
 2. **Abra o Google Chrome**
